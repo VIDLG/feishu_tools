@@ -1,0 +1,16 @@
+pre-commit:
+  parallel: true
+  commands:
+    fmt:
+      root: "."
+      run: just fmt-check
+
+pre-push:
+  parallel: true
+  commands:
+    clippy:
+      root: "."
+      run: just clippy-deny
+    test:
+      root: "."
+      run: just test

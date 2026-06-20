@@ -1,0 +1,33 @@
+[storage]
+# Local workspace root for all fst outputs (backups/exports, media,
+# reports, manifests). Defaults to ~/.fst/storage so config and data live
+# side-by-side under ~/.fst/. Override to put backups on a different disk:
+# root = "D:/backup/feishu/fst-storage"
+# root = "/mnt/nas/feishu/fst-storage"
+
+[list]
+# lark-cli search page size.
+page_size = 20
+# Default search keyword. Empty means no keyword filter.
+query = ""
+# Only list resources owned by you. Shared-in files usually do not count
+# against your storage, so this defaults to true.
+mine = true
+
+[audit]
+# Number of largest rows written to top-* CSV reports.
+top_limit = 100
+# Include embedded media when auditing/exporting, so size estimates are closer
+# to backup/delete decisions.
+include_media = true
+# Max concurrent lark-cli subprocesses for export/download.
+# Set to 1 to reproduce the old serial behavior.
+concurrency = 4
+
+[delete]
+# Mark known-size rows at or above this size as delete candidates.
+min_mb = 100.0
+# Keep only the largest N delete candidates. 0 means no cap.
+top = 0
+# Keep unknown-size rows in the review plan instead of hiding them.
+include_unknown = true

@@ -1,0 +1,27 @@
+# Rust
+/target
+**/*.rs.bk
+
+# Cargo lockfile (binary application, keep committed)
+# (intentionally not ignored — fst is a CLI binary, not a library)
+
+# Editor / IDE
+.idea/
+.vscode/
+.zed/
+*.iml
+
+# OS junk
+.DS_Store
+Thumbs.db
+nul
+
+# Local secrets / config overrides
+.env
+.env.*
+!.env.example
+
+# Local runtime data
+logs/
+captures/
+diagnostics/

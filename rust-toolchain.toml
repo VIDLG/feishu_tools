@@ -1,0 +1,6 @@
+[toolchain]
+# fst uses edition 2024, which requires Rust >= 1.85. Pin the toolchain so
+# local dev, CI, and `just` recipes all build with the same compiler.
+channel = "1.96"
+profile = "minimal"
+components = ["rustfmt", "clippy"]
