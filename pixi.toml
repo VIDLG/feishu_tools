@@ -1,0 +1,14 @@
+[workspace]
+name = "fst"
+channels = ["conda-forge"]
+platforms = ["win-64"]
+
+# fst is a pure-Rust CLI, but we use pixi as a unified toolchain manager so the
+# exact same set of CI/release tooling is reproducible across local dev and
+# GitHub Actions. Rust itself is still pinned via rust-toolchain.toml.
+[dependencies]
+python = ">=3.12,<3.15"
+just = "*"
+git-cliff = "*"
+lefthook = "*"
+rtk-cli = ">=0.38.0,<0.39"

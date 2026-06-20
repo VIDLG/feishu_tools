@@ -5,6 +5,11 @@
 # Cargo lockfile (binary application, keep committed)
 # (intentionally not ignored — fst is a CLI binary, not a library)
 
+# pixi (env cache; keep pixi.lock committed for reproducibility)
+.pixi/
+.pixi-task-*/
+.pixi-target-tests/
+
 # Editor / IDE
 .idea/
 .vscode/
