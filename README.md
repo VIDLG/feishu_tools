@@ -45,6 +45,33 @@ fst list --limit 20
 fst audit size --mode full --limit 20
 ```
 
+## Toolchain
+
+`fst` ships with a unified toolchain via [`pixi`](https://pixi.sh) so local dev
+and CI use the exact same set of tools (`just`, `git-cliff`, `lefthook`,
+`rtk-cli`). Rust itself is pinned by `rust-toolchain.toml` (v1.96, edition 2024).
+
+First-time setup:
+
+```bash
+pixi install
+just hooks-install   # install lefthook git hooks
+```
+
+Common recipes (all routed through `pixi run`):
+
+| Recipe | Purpose |
+|---|---|
+| `just dev` | Fast loop: fmt + check + clippy |
+| `just ci` | Full CI: fmt-check + check + clippy-deny + test + machete |
+| `just fmt` / `just fmt-check` | Format / verify formatting |
+| `just clippy` / `just clippy-deny` | Lint / warnings-as-errors |
+| `just test` | Run tests |
+| `just run <args>` | Run the binary |
+
+Prefer `just <recipe>` over raw `cargo <cmd>` — the `Justfile` wraps every
+command with `pixi run -- rtk ...` so the environment is reproducible.
+
 ## Configuration
 
 Default config path: `~/.fst/config.toml`.
@@ -462,7 +489,7 @@ fst delete apply --input ~/.fst/storage/reports/delete-plan-xxx.csv --yes
 With default config:
 
 ```text
-D:/backup/feishu/fst-storage/
+~/.fst/storage/
   backups/
     exports/
     files/
@@ -484,6 +511,16 @@ D:/backup/feishu/fst-storage/
     delete-plan-<timestamp>.csv
     delete-results-<timestamp>.json
     delete-results-<timestamp>.csv
+```
+
+The workspace root is configurable via `[storage].root`. Point it at another
+disk if `~/.fst` is on a small partition:
+
+```toml
+[storage]
+root = "D:/backup/feishu/fst-storage"
+# or
+root = "/mnt/nas/feishu/fst-storage"
 ```
 
 ## Authentication and scopes

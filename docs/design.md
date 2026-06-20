@@ -61,3 +61,33 @@ we get clever.
 
 Keep tests tiny and targeted. Add one test when a parser or safety rule would be
 easy to break silently. Avoid fixtures unless a real bug needs them.
+
+## Toolchain: pixi + just, not raw cargo
+
+`fst` is a pure-Rust binary, but its CI/release tooling (`just`, `git-cliff`,
+`lefthook`, `rtk-cli`, and the Python release scripts) needs to be reproducible.
+`pixi` locks that toolchain via `pixi.lock`; the `Justfile` routes every
+command through `pixi run -- rtk ...`. Rust itself stays pinned via
+`rust-toolchain.toml` because that is the community standard and pixi should
+not duplicate it.
+
+On Windows, `just` is invoked from MSYS bash, which injects a pseudo env var
+`!::`. pixi's activation script trips on it, so the `Justfile` defines:
+
+```makefile
+pixi := if os_family() == "windows" { "env -u '!::' pixi" } else { "pixi" }
+```
+
+This is the same workaround proxai uses.
+
+## Errors and exit codes
+
+Failures map to semantic exit codes via `LarkError` (`src/error.rs`) so shell
+wrappers can react to auth/scope/network/lark-cli failures differently. Avoid
+`anyhow::anyhow` in new code — add a typed variant and map it to a code.
+
+## No global state
+
+Subprocess cwd is passed via `tokio::process::Command::current_dir`. Never
+`env::set_current_dir`. Tests and concurrent runs must not race over process
+state.

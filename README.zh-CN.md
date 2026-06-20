@@ -45,6 +45,33 @@ fst list --limit 20
 fst audit size --mode full --limit 20
 ```
 
+## 工具链
+
+`fst` 通过 [`pixi`](https://pixi.sh) 统一管理工具链，让本地和 CI 使用完全
+一致的环境（`just` / `git-cliff` / `lefthook` / `rtk-cli`）。Rust 本身由
+`rust-toolchain.toml` 锁定在 v1.96（edition 2024）。
+
+首次配置：
+
+```bash
+pixi install
+just hooks-install   # 安装 lefthook git 钩子
+```
+
+常用 recipe（都通过 `pixi run` 运行）：
+
+| Recipe | 用途 |
+|---|---|
+| `just dev` | 快速本地回路：fmt + check + clippy |
+| `just ci` | 完整 CI：fmt-check + check + clippy-deny + test + machete |
+| `just fmt` / `just fmt-check` | 格式化 / 校验格式 |
+| `just clippy` / `just clippy-deny` | Lint / 警告视为错误 |
+| `just test` | 跑测试 |
+| `just run <args>` | 运行二进制 |
+
+请优先用 `just <recipe>` 而不是裸 `cargo <cmd>` —— `Justfile` 会把所有
+命令包装成 `pixi run -- rtk ...`，保证环境可复现。
+
 ## 配置
 
 默认配置路径：`~/.fst/config.toml`。
