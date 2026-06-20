@@ -25,3 +25,4 @@ nul
 logs/
 captures/
 diagnostics/
+dist/

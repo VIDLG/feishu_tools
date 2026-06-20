@@ -14,3 +14,8 @@ pre-push:
     test:
       root: "."
       run: just test
+    release-tag-version:
+      root: "."
+      # Reads stdin from git push; only fails when pushing a v* tag that
+      # does not match Cargo.toml's package.version.
+      run: just ci-check-release-tag-version
