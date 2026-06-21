@@ -165,12 +165,6 @@ It checks:
   - `docs +fetch` for doc/docx samples
   - `drive +export`
 
-Optional quota probe:
-
-```bash
-fst doctor --user-id <user_id>
-```
-
 Optional explicit document probes:
 
 ```bash
@@ -179,24 +173,6 @@ fst doctor --doc-type docx --doc-token <token>
 ```
 
 `doctor` can find systemic problems, but it cannot prove every file is accessible. Feishu permissions are per-resource and can also be affected by folder permissions, ownership, wiki routing, tenant policy, and secure labels.
-
-## Quota
-
-```bash
-fst quota --user-id <user_id>
-```
-
-This calls:
-
-```bash
-lark-cli drive quota_details get --as user --params '{"quota_detail_id":"<user_id>"}'
-```
-
-Required scope:
-
-```text
-drive:quota_detail:read_one
-```
 
 ## List
 
@@ -535,7 +511,6 @@ lark-cli auth login --scope "search:docs:read"
 lark-cli auth login --scope "docs:document:export"
 lark-cli auth login --scope "docx:document:readonly"
 lark-cli auth login --scope "docs:document.media:download"
-lark-cli auth login --scope "drive:quota_detail:read_one"
 ```
 
 Common scopes:
@@ -547,7 +522,6 @@ docx:document:readonly
 docs:document.media:download
 drive:drive:readonly
 drive:drive
-drive:quota_detail:read_one
 ```
 
 If `lark-cli` returns auth/scope errors, `fst` preserves the original output and appends a short next-step hint.
@@ -602,11 +576,8 @@ fst config init
 fst config show
 
 fst doctor
-fst doctor --user-id <user_id>
 fst doctor --doc <doc_url_or_token>
 fst doctor --doc-type docx --doc-token <token>
-
-fst quota --user-id <user_id>
 
 fst list
 fst list --folder-token ""

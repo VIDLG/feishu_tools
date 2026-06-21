@@ -165,12 +165,6 @@ fst doctor
   - 对 doc/docx 样本执行 `docs +fetch`
   - 执行 `drive +export`
 
-可选容量探测：
-
-```bash
-fst doctor --user-id <user_id>
-```
-
 可选指定文档探测：
 
 ```bash
@@ -179,24 +173,6 @@ fst doctor --doc-type docx --doc-token <token>
 ```
 
 `doctor` 能发现系统性问题，但不能证明每个文件都一定可访问。飞书权限是逐资源模型，还会受到文件夹权限、归属人、Wiki 路由、租户策略和密级等影响。
-
-## 容量信息
-
-```bash
-fst quota --user-id <user_id>
-```
-
-底层调用：
-
-```bash
-lark-cli drive quota_details get --as user --params '{"quota_detail_id":"<user_id>"}'
-```
-
-需要权限：
-
-```text
-drive:quota_detail:read_one
-```
 
 ## 获取清单
 
@@ -522,7 +498,6 @@ lark-cli auth login --scope "search:docs:read"
 lark-cli auth login --scope "docs:document:export"
 lark-cli auth login --scope "docx:document:readonly"
 lark-cli auth login --scope "docs:document.media:download"
-lark-cli auth login --scope "drive:quota_detail:read_one"
 ```
 
 常用权限：
@@ -534,7 +509,6 @@ docx:document:readonly
 docs:document.media:download
 drive:drive:readonly
 drive:drive
-drive:quota_detail:read_one
 ```
 
 如果 `lark-cli` 返回认证或权限错误，`fst` 会保留原始输出，并追加简短的下一步建议。
@@ -587,11 +561,8 @@ fst config init
 fst config show
 
 fst doctor
-fst doctor --user-id <user_id>
 fst doctor --doc <doc_url_or_token>
 fst doctor --doc-type docx --doc-token <token>
-
-fst quota --user-id <user_id>
 
 fst list
 fst list --folder-token ""

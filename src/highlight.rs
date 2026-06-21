@@ -104,12 +104,6 @@ pub fn toml(text: &str) -> Result<String> {
     Ok(highlight(text, "toml", &theme))
 }
 
-/// Highlight JSON text (used by pretty-printed JSON output, e.g. `quota`).
-pub fn json(text: &str) -> Result<String> {
-    let theme = theme(None);
-    Ok(highlight(text, "json", &theme))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -131,6 +125,5 @@ mod tests {
         let assets = ASSETS.lock().unwrap();
         let ss = assets.get_syntax_set().expect("syntax set loads");
         assert!(ss.find_syntax_by_extension("toml").is_some());
-        assert!(ss.find_syntax_by_extension("json").is_some());
     }
 }

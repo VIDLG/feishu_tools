@@ -21,7 +21,6 @@ use commands::backup::BackupCommand;
 use commands::delete::DeleteCommand;
 use commands::doctor::DoctorCommand;
 use commands::list::ListCommand;
-use commands::quota::QuotaCommand;
 use commands::report::ReportCommand;
 use config::{AppConfig, DEFAULT_CONFIG_PATH, expand_config_path, write_default_config};
 
@@ -70,9 +69,6 @@ enum Commands {
 
     /// Build and apply human-confirmed delete plans.
     Delete(DeleteCommand),
-
-    /// Show Drive quota details for a user.
-    Quota(QuotaCommand),
 
     /// Summarize fst CSV reports.
     Report(ReportCommand),
@@ -237,7 +233,6 @@ async fn run(cli: Cli) -> anyhow::Result<()> {
             let config = AppConfig::load(&cli.config)?;
             command.run(&config).await
         }
-        Commands::Quota(command) => command.run().await,
         Commands::Report(command) => command.run(),
         Commands::Doctor(command) => {
             let config_path = expand_config_path(&cli.config);

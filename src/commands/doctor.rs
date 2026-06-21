@@ -39,10 +39,6 @@ struct ScopeRow {
 
 #[derive(Debug, Args)]
 pub struct DoctorCommand {
-    /// Current user's user_id. Enables quota probe.
-    #[arg(long)]
-    user_id: Option<String>,
-
     /// A doc URL or token used to probe docs +fetch.
     #[arg(long)]
     doc: Option<String>,
@@ -72,17 +68,6 @@ impl DoctorCommand {
         probe_search(&lark).await;
         probe_root_folder_list(&lark).await;
         probe_auto_sample(&lark, config).await;
-        if let Some(user_id) = self.user_id.as_deref() {
-            probe_quota(&lark, user_id).await;
-        } else {
-            println!(
-                "{}",
-                color_line_status(
-                    "probe quota        : skipped (--user-id not provided)",
-                    "skipped"
-                )
-            );
-        }
         if let Some(doc) = self.doc.as_deref() {
             probe_doc_fetch(&lark, doc).await;
         } else {
@@ -157,7 +142,7 @@ async fn check_auth_status(lark: &LarkCli) {
     match lark.run(["auth", "status"]).await {
         Ok(output) if output.success => {
             println!("{}", color_line_status("auth status        : ok", "ok"));
-            let text = output.combined;
+            let text = output.combined.as_str();
             let mut unverified = Vec::new();
             let rows = [
                 "search:docs:read",
@@ -166,7 +151,6 @@ async fn check_auth_status(lark: &LarkCli) {
                 "docs:document.media:download",
                 "drive:drive:readonly",
                 "drive:drive",
-                "drive:quota_detail:read_one",
             ]
             .into_iter()
             .map(|scope| {
@@ -198,13 +182,15 @@ async fn check_auth_status(lark: &LarkCli) {
             println!("{}", output.combined.trim());
             println!("Try: lark-cli auth login --domain docs");
         }
-        Err(err) => println!(
-            "{}",
-            color_line_status(
-                &format!("auth status        : failed to spawn: {err}"),
-                "failed"
-            )
-        ),
+        Err(err) => {
+            println!(
+                "{}",
+                color_line_status(
+                    &format!("auth status        : failed to spawn: {err}"),
+                    "failed"
+                )
+            );
+        }
     }
 }
 
@@ -361,34 +347,6 @@ fn wiki_inner_token(meta: &serde_json::Value) -> Option<String> {
         .get("token")
         .and_then(|value| value.as_str())
         .map(ToOwned::to_owned)
-}
-
-async fn probe_quota(lark: &LarkCli, user_id: &str) {
-    let params = serde_json::json!({ "quota_detail_id": user_id }).to_string();
-    match lark
-        .json([
-            "drive",
-            "quota_details",
-            "get",
-            "--as",
-            "user",
-            "--params",
-            params.as_str(),
-            "--format",
-            "json",
-        ])
-        .await
-    {
-        Ok(_) => println!("{}", color_line_status("probe quota        : ok", "ok")),
-        Err(err) => {
-            println!(
-                "{}",
-                color_line_status("probe quota        : failed", "failed")
-            );
-            println!("  {err}");
-            println!("  Try: lark-cli auth login --scope \"drive:quota_detail:read_one\"");
-        }
-    }
 }
 
 async fn probe_doc_fetch(lark: &LarkCli, doc: &str) {
